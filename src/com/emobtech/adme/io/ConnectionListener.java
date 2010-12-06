@@ -1,20 +1,36 @@
+/*
+ * ConnectionListener.java
+ * 05/12/2010
+ * AdME - Advertising Micro Edition
+ * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
+ * All rights reserved
+ */
 package com.emobtech.adme.io;
 
 /**
- * Interface com métodos que descreve os eventos de uma conexão de dados.
- * @author Ernandes Jr (ernandes@gmail.com)
+ * <p>
+ * This interface defines the events that are triggered during a connection.
+ * </p>
+ * 
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
+ * @since 1.0
+ * @see HttpManager
  */
 public interface ConnectionListener {
 	/**
-	 * Conexão falhou.
-	 * @param url URL que falhou.
-	 * @param exception Erro.
+	 * <p>
+	 * Connection failed.
+	 * </p>
+	 * @param url URL.
+	 * @param exception Error.
 	 */
 	public void onFail(String url, Throwable exception);
 
 	/**
-	 * Conexão bem sucessidade.
-	 * @param url URL acessada.
+	 * <p>
+	 * Connection succeeded.
+	 * </p>
+	 * @param url URL.
 	 */
 	public void onSuccess(String url);
 }

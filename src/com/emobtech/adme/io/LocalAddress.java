@@ -1,3 +1,10 @@
+/*
+ * LocalAddress.java
+ * 05/12/2010
+ * AdME - Advertising Micro Edition
+ * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
+ * All rights reserved
+ */
 package com.emobtech.adme.io;
 
 import java.io.IOException;
@@ -6,8 +13,12 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.ServerSocketConnection;
 
 /**
- * Classe para pegar o endereço IP.
- * @author Ernandes Jr (ernandes@gmail.com)
+ * <p>
+ * This class retrieves the device's local address.
+ * </p>
+ * 
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
+ * @since 1.0
  */
 public class LocalAddress {
 	/**

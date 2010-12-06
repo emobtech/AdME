@@ -1,3 +1,10 @@
+/*
+ * HttpManager.java
+ * 05/12/2010
+ * AdME - Advertising Micro Edition
+ * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
+ * All rights reserved
+ */
 package com.emobtech.adme.io;
 
 import java.io.ByteArrayOutputStream;
@@ -10,37 +17,54 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
 /**
- * Classe responsável por baixar contéudos a partir de uma URL.
- * @author Ernandes Jr (ernandes@gmail.com)
+ * <p>
+ * This class is responsible for managing Http connections.
+ * </p>
+ * 
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
+ * @since 1.0
+ * @see ConnectionListener
  */
-public class HttpManager implements Runnable {
+public final class HttpManager implements Runnable {
 	/**
-	 * Escutador dos estados da conexão.
+	 * <p>
+	 * Connection listener.
+	 * </p>
 	 */
 	protected ConnectionListener connListener;
 	
 	/**
-	 * Propriedades do request.
+	 * <p>
+	 * Request properties.
+	 * </p>
 	 */
 	protected Hashtable requestProperties;
 	
 	/**
-	 * URL a ser acessada.
+	 * <p>
+	 * URL.
+	 * </p>
 	 */
 	protected String url;
 	
 	/**
-	 * Dados baixados.
+	 * <p>
+	 * Data accessed.
+	 * </p>
 	 */
 	protected byte[] data;
 	
 	/**
-	 * Para o download corrente.
+	 * <p>
+	 * Stop download (true).
+	 * </p>
 	 */
 	protected boolean toStop;
 	
 	/**
-	 * Construtor.
+	 * <p>
+	 * Create an instance of HttpManager class.
+	 * </p>
 	 */
 	public HttpManager() {
 		requestProperties = new Hashtable();
@@ -50,17 +74,21 @@ public class HttpManager implements Runnable {
 	}
 	
 	/**
-	 * Atribue uma propriedade do request.
-	 * @param property Propriedade.
-	 * @param value Valor.
+	 * <p>
+	 * Sets a request property.
+	 * </p>
+	 * @param property Property.
+	 * @param value Value.
 	 */
 	public synchronized void setRequestProperty(String property, String value) {
 		requestProperties.put(property, value);
 	}
 	
 	/**
-	 * Inicia o download.
-	 * @param url URL a ser acessada.
+ 	 * <p>
+	 * Starts connection.
+	 * </p>
+	 * @param url URL.
 	 */
 	public synchronized void start(String url) {
 		this.url = url;
@@ -77,7 +105,9 @@ public class HttpManager implements Runnable {
 	}
 	
 	/**
-	 * Para o download corrente.
+	 * <p>
+	 * Stops connection.
+	 * </p>
 	 */
 	public synchronized void stop() {
 		toStop = true;
@@ -86,16 +116,20 @@ public class HttpManager implements Runnable {
 	}
 
 	/**
-	 * Retorna os dados baixados.
-	 * @return Dados.
+	 * <p>
+	 * Returns connection's data.
+	 * </p>
+	 * @return Data.
 	 */
 	public byte[] getData() {
 		return data;
 	}
 	
 	/**
-	 * Atribui um escutador dos estados da conexão.
-	 * @param listener
+	 * <p>
+	 * Sets the connection listener.
+	 * </p>
+	 * @param listener Listener.
 	 */
 	public void setConnectionListener(ConnectionListener listener) {
 		this.connListener = listener;

@@ -18,7 +18,7 @@ import com.emobtech.adme.util.URLEncoder;
  * recommended to start by extending this class.
  * </p>
  * 
- * @author Ernandes Jr (ernandes@gmail.com)
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
  * @since 1.0
  * @see InneractiveAdHandler
  */

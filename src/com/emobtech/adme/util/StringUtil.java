@@ -1,15 +1,28 @@
+/*
+ * StringUtil.java
+ * 05/12/2010
+ * AdME - Advertising Micro Edition
+ * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
+ * All rights reserved
+ */
 package com.emobtech.adme.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Classe com alguns métodos utilitários para trabalhar com strings.
- * @author Ernandes Jr (ernandes@gmail.com)
+ * <p>
+ * This class implements a set of util string methods.
+ * </p>
+ * 
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
+ * @since 1.0
  */
 public final class StringUtil {
     /**
-     * Retorna uma string a partir do conteúdo do stream.
+     * <p>
+     * Returns a string from a given stream.
+     * </p>
      * @param in Stream.
      * @return String.
      */
@@ -27,9 +40,11 @@ public final class StringUtil {
     }
     
 	/**
-	 * Verifica se a string está vazia ou nula.
+	 * <p>
+	 * Verifies whether a given string is empty (length = 0 or null).
+	 * </p>
 	 * @param str String.
-	 * @return Vazia ou nula (true).
+	 * @return Empty (true).
 	 */
 	public static final boolean isEmpty(String str) {
 		return str == null || str.trim().length() == 0;
@@ -37,15 +52,32 @@ public final class StringUtil {
     
 	/**
 	 * <p>
-	 * Substitui cada substring por uma outra substring no texto informado.
-	 * </p>
-	 * @param text Texto.
-	 * @param searchStr Substring a ser substituída.
-	 * @param replacementStr Substring substituta.
-	 * @return Texto substituído.
+	 * Replaces a given substring to another substring.
+	 * <p/>
+	 * @param text String.
+	 * @param searchStr Substring to be replaced.
+	 * @param replacementStr Replacement substring.
+	 * @return String replaced.
+	 * @throws IllegalArgumentException If any parameter is null.
 	 */
 	public static final String replace(String text, String searchStr,
 		String replacementStr) {
+		if (text == null) {
+			throw new IllegalArgumentException("Text must not be null.");
+		}
+		if (searchStr == null) {
+			throw new IllegalArgumentException(
+				"Search string must not be null.");
+		}
+		if (replacementStr == null) {
+			throw new IllegalArgumentException(
+				"Replacement string must not be null.");
+		}
+		//
+		if (isEmpty(text) || isEmpty(searchStr)) {
+			return text;
+		}
+		//
 		StringBuffer sb = new StringBuffer();
 		int searchStringPos = text.indexOf(searchStr);
 		int startPos = 0;
@@ -65,37 +97,12 @@ public final class StringUtil {
 	}
 	
     /**
-     * <p>
-     * Returna uma string com zeros a esquerda.
-     * </p>
-     * @param n Número.
-     * @param len Número de zeros.
-     * @return String.
-     */
-    public static final String zeroPad(int n, int len) {
-    	String s = n + "";
-    	//
-    	for (int i = len - s.length(); i > 0; i--) {
-            s = '0' + s;
-    	}
-    	//
-        return s;
-    }
-    
-	/**
 	 * <p>
-	 * Verify if a given char is a space, tab, line return, etc.
-	 * </p> 
-	 * @param c Char.
-	 * @return is space char or not.
-	 */
-	public static final boolean isSpaceChar(char c) {
-		//\u0020
-		return c == ' ' || c == '\t' || c == '\n' || c == '\r';
-	}
-	
-	/**
-	 * Construtor privado. Evitar criar instâncias desta classe.
+	 * Create an instance of StringUtil class.
+	 * </p>
+	 * <p>
+	 * Private constructor to avoid object instantiation.
+	 * </p>
 	 */
 	private StringUtil() {}
 }

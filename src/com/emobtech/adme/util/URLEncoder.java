@@ -1,21 +1,33 @@
+/*
+ * URLEncoder.java
+ * 05/12/2010
+ * AdME - Advertising Micro Edition
+ * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
+ * All rights reserved
+ */
 package com.emobtech.adme.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
- * Classe utilizada para codificar URLs.
- * @author Ernandes Jr (ernandes@gmail.com)
+ * <p>
+ * This class is responsible for enconding strings.
+ * </p>
+ * 
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
+ * @since 1.0
  */
 public final class URLEncoder {
     /**
 	 * <p>
-	 * Codifica uma dada string.
+	 * Encode a given string. If encode type is not informed, UTF-8 is
+	 * considered.
 	 * </p>
-	 * @param s String a ser codificada.
-	 * @param enc Codificação.
-	 * @return String codificada.
-	 * @throws IllegalArgumentException Se a string for nula.
+	 * @param s String to encode.
+	 * @param enc Encode.
+	 * @return Encoded string.
+	 * @throws IllegalArgumentException If string is empty or null.
 	 */
 	public static String encode(String s, String enc) {
 		if (s == null) {
@@ -68,16 +80,21 @@ public final class URLEncoder {
 	
 	/**
 	 * <p>
-	 * Pega o valor hexadecimal de um caractere.
+	 * Get a hex value of a char.
 	 * </p>
-	 * @param c Caractere.
+	 * @param c Char.
 	 */
 	private static String getHexChar(int c) {
 		return (c < 16 ? "%0" : "%") + Integer.toHexString(c).toUpperCase();
 	}
 	
 	/**
-	 * Construtor privado. Evitar criar instâncias desta classe.
+	 * <p>
+	 * Create an instance of URLEncoder class.
+	 * </p>
+	 * <p>
+	 * Private constructor to avoid object instantiation.
+	 * </p>
 	 */
 	private URLEncoder() {}
 }

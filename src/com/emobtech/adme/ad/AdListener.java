@@ -1,18 +1,31 @@
+/*
+ * AdListener.java
+ * 05/12/2010
+ * AdME - Advertising Micro Edition
+ * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
+ * All rights reserved
+ */
 package com.emobtech.adme.ad;
 
 /**
- * Interface que define os estados do download de um ad.
- * @author Ernandes Jr (ernandes@gmail.com)
+ * <p>
+ * This interface defines the events that are triggered during an ad request.
+ * </p>
+ * 
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
+ * @since 1.0
+ * @see AdManager
+ * @see Ad
  */
 public interface AdListener {
 	/**
-	 * Ad recebido.
+	 * Ad received.
 	 * @param ad Ad.
 	 */
 	public void onReceived(Ad ad);
 	
 	/**
-	 * Falha ao baixar o ad.
+	 * Error by retrieving the ad.
 	 * @param exception Error.
 	 */
 	public void onFailedAd(Throwable exception);

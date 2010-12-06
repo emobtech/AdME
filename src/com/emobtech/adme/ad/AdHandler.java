@@ -16,7 +16,7 @@ import java.io.InputStream;
  * to be accessed in order to retrieve an ad from a given network.
  * </p>
  * 
- * @author Ernandes Jr (ernandes@gmail.com)
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
  * @since 1.0
  * @see AbstractAdHandler
  */

@@ -1,3 +1,10 @@
+/*
+ * InneractiveAdHandler.java
+ * 05/12/2010
+ * AdME - Advertising Micro Edition
+ * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
+ * All rights reserved
+ */
 package com.emobtech.adme.ad;
 
 import java.io.IOException;
@@ -9,12 +16,21 @@ import org.xmlpull.v1.XmlPullParser;
 import com.emobtech.adme.util.StringUtil;
 
 /**
- * @author Ernandes Jr
- *
+ * <p>
+ * This class defines ad handler for the ad network Inner-active
+ * (www.inner-active.com).
+ * </p>
+ * 
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
+ * @since 1.0
+ * @see AdManager
  */
 public final class InneractiveAdHandler extends AbstractAdHandler {
 	/**
-	 * @param accountID
+	 * <p>
+	 * Create an instance of InneractiveAdHandler class.
+	 * </p>
+	 * @param accountID Account ID.
 	 */
 	public InneractiveAdHandler(String accountID) {
 		super(accountID);
@@ -63,9 +79,12 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	}
 	
 	/**
-	 * @param response
-	 * @return
-	 * @throws IOException
+	 * <p>
+	 * Parses the ad's XML content.
+	 * </p>
+	 * @param response Response.
+	 * @return Ad.
+	 * @throws IOException If occurs any I/O error by parsing the ad.
 	 */
 	protected Ad parseXMLResponse(InputStream response) throws IOException {
 		try {
@@ -126,9 +145,12 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	}
 	
 	/**
-	 * @param response
-	 * @return
-	 * @throws IOException
+	 * <p>
+	 * Parses the ad's HTML content.
+	 * </p>
+	 * @param response Response.
+	 * @return Ad.
+	 * @throws IOException If occurs any I/O error by parsing the ad.
 	 */
 	protected Ad parseHTMLResponse(InputStream response) throws IOException {
 		try {

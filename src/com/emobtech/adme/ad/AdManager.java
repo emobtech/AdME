@@ -1,3 +1,10 @@
+/*
+ * AdManager.java
+ * 05/12/2010
+ * AdME - Advertising Micro Edition
+ * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
+ * All rights reserved
+ */
 package com.emobtech.adme.ad;
 
 import java.io.ByteArrayInputStream;
@@ -8,42 +15,66 @@ import com.emobtech.adme.io.HttpManager;
 import com.emobtech.adme.util.StringUtil;
 
 /**
- * Classe responsável por baixar os Ads.
- * @author Ernandes Jr (ernandes@gmail.com)
+ * <p>
+ * This class is responsible for managing the request between the application
+ * and the ad network, in order to retrieve an ad.
+ * </p>
+ * 
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
+ * @since 1.0
+ * @see Ad
+ * @see AdHandler
+ * @see AdListener
+ * @see AbstractAdHandler
+ * @see InneractiveAdHandler
  */
 public final class AdManager implements ConnectionListener {
 	/**
-	 * Gerenciador de downloads. 
+	 * <p>
+	 * Http connection to access the ad's content.
+	 * </p> 
 	 */
 	private HttpManager adDownloader;
 	
 	/**
-	 * Gerenciador de downloads para baixar as imagens.
+	 * <p>
+	 * Http connection to download the ad's image.
+	 * </p> 
 	 */
 	private HttpManager contentDownloader;
 
 	/**
+	 * <p>
 	 * Ad handler.
+	 * </p>
 	 */
 	private AbstractAdHandler handler;
 	
 	/**
-	 * Escutar dos eventos dos ads.
+	 * <p>
+	 * Ad listener.
+	 * </p>
 	 */
 	private AdListener listener;
 	
 	/**
-	 * Último ad baixado.
+	 * <p>
+	 * Last ad retrieved.
+	 * </p>
 	 */
 	private Ad prevAd;
 
 	/**
-	 * Ad baixado.
+	 * <p>
+	 * Current ad retrieved.
+	 * </p>
 	 */
 	private Ad ad;
 	
 	/**
-	 * Construtor.
+	 * <p>
+	 * Create an instance of AdManager class.
+	 * </p>
 	 * @param handler Ad handler.
 	 */
 	public AdManager(AbstractAdHandler handler) {
@@ -67,7 +98,9 @@ public final class AdManager implements ConnectionListener {
 	}
 	
 	/**
-	 * Atribue o ad handler.
+	 * <p>
+	 * Sets the ad handler object.
+	 * </p>
 	 * @param handler Handler.
 	 */
 	public void setAdHandler(AbstractAdHandler handler) {
@@ -75,15 +108,19 @@ public final class AdManager implements ConnectionListener {
 	}
 	
 	/**
-	 * Atribue o escutador dos eventos dos ads.
-	 * @param l Escutador.
+	 * <p>
+	 * Sets the ad listener object.
+	 * </p>
+	 * @param listener Listener.
 	 */
-	public void setListener(AdListener l) {
-		listener = l;
+	public void setAdListener(AdListener listener) {
+		this.listener = listener;
 	}
 	
 	/**
-	 * Requisita o download do ad.
+	 * <p>
+	 * Starts an ad request.
+	 * </p>
 	 */
 	public void startGetAd() {
 		adDownloader.start(handler.getServiceURL());
@@ -92,7 +129,9 @@ public final class AdManager implements ConnectionListener {
 	}
 	
 	/**
-	 * Ad baixado.
+	 * <p>
+	 * Returns the ad just retrieved.
+	 * </p>
 	 * @return Ad.
 	 */
 	public Ad getAd() {
@@ -146,7 +185,9 @@ public final class AdManager implements ConnectionListener {
 	}
 	
 	/**
-	 * Notifica que o ad foi recebido.
+	 * <p>
+	 * Notifies the ad listener that a ad has just been received.
+	 * </p>
 	 * @param ad Ad.
 	 */
 	protected void notifyReceivedAd(Ad ad) {

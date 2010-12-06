@@ -12,7 +12,7 @@ package com.emobtech.adme.ad;
  * This class defines an entity that represents an Ad.
  * </p>
  * 
- * @author Ernandes Jr (ernandes@gmail.com)
+ * @author Ernandes Mourao Junior (ernandes@gmail.com)
  * @since 1.0
  * @see AdManager
  */
