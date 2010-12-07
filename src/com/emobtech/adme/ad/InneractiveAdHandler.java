@@ -28,6 +28,27 @@ import com.emobtech.adme.util.StringUtil;
 public final class InneractiveAdHandler extends AbstractAdHandler {
 	/**
 	 * <p>
+	 * Test mode flag.
+	 * </p>
+	 */
+	private boolean testMode;
+	
+	/**
+	 * <p>
+	 * M2M API version.
+	 * </p>
+	 */
+	private String apiVersion;
+	
+	/**
+	 * <p>
+	 * Response format.
+	 * </p>
+	 */
+	private String responseFormat;
+	
+	/**
+	 * <p>
 	 * Create an instance of InneractiveAdHandler class.
 	 * </p>
 	 * @param accountID Account ID.
@@ -35,7 +56,63 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	public InneractiveAdHandler(String accountID) {
 		super(accountID);
 		setAuid("-1");
+		setApiVersion("Sm2m-1.5.1");
+		setResponseFormat("xml");
 		setUserAgent(null);
+	}
+	
+	/**
+	 * <p>
+	 * Sets test mode enabled. It means your app will receive test ads from
+	 * Inner-active. Use this mode during your integration tests.
+	 * </p>
+	 * @param enabled Enabled (true).
+	 */
+	public void setTestModeEnabled(boolean enabled) {
+		testMode = enabled;
+	}
+	
+	/**
+	 * <p>
+	 * Sets the response format return by ad network. Valid values are "xml"
+	 * and "html".
+	 * </p>
+	 * @param format Format.
+	 */
+	public void setResponseFormat(String format) {
+		if (StringUtil.isEmpty(format)) {
+			throw new IllegalArgumentException("Format must not be empty.");
+		}
+		//
+		format = format.toLowerCase().trim();
+		//
+		if (format.equals("xml")) {
+			responseFormat = "clientRequestAd";
+		} else if (format.equals("html")) {
+			responseFormat = "clientRequestHtmlAd";
+		} else {
+			throw new IllegalArgumentException("Invalid format: " + format);
+		}
+	}
+
+	/**
+	 * <p>
+	 * Returns the M2M API version.
+	 * </p>
+	 * @return Version.
+	 */
+	public String getApiVersion() {
+		return apiVersion;
+	}
+
+	/**
+	 * <p>
+	 * Sets the M2M API version.
+	 * </p>
+	 * @param apiVersion Version.
+	 */
+	public void setApiVersion(String apiVersion) {
+		this.apiVersion = apiVersion;
 	}
 
 	/**
@@ -45,14 +122,15 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 		StringBuffer url =
 			new StringBuffer("http://m2m1.inner-active.com/simpleM2M/");
 		//
-//		url.append("clientRequestHtmlAd?");
-		url.append("clientRequestAd?");
+		url.append(responseFormat + "?");
 		url.append("aid=" + getAccountID());
 		url.append("&cid=" + getAuid());
-		url.append("&v=Sm2m-1.5.1");
-		url.append("&po=639");
+		url.append("&v=" + getApiVersion());
+//		url.append("&po=639");
 		url.append(getMetadataAsQueryString());
-//		url.append("&test=true");
+		if (testMode) {
+			url.append("&test=true");
+		}
 		//
 		return url.toString();
 	}
