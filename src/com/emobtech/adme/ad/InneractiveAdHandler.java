@@ -28,24 +28,17 @@ import com.emobtech.adme.util.StringUtil;
 public final class InneractiveAdHandler extends AbstractAdHandler {
 	/**
 	 * <p>
-	 * Test mode flag.
+	 * Inner-active base URL.
 	 * </p>
 	 */
-	private boolean testMode;
+	private final String IA_URL = "http://m2m1.inner-active.com/simpleM2M/";
 	
 	/**
 	 * <p>
-	 * M2M API version.
+	 * User agent.
 	 * </p>
 	 */
-	private String apiVersion;
-	
-	/**
-	 * <p>
-	 * Response format.
-	 * </p>
-	 */
-	private String responseFormat;
+	private String userAgent;
 	
 	/**
 	 * <p>
@@ -54,11 +47,11 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	 * @param accountID Account ID.
 	 */
 	public InneractiveAdHandler(String accountID) {
-		super(accountID);
-		setAuid("-1");
-		setApiVersion("Sm2m-1.5.1");
+		setUrl(IA_URL);
 		setResponseFormat("xml");
-		setUserAgent(null);
+		setParameter("aid", accountID);
+		setParameter("cid", "-1");
+		setParameter("v", "Sm2m-1.5.1");
 	}
 	
 	/**
@@ -69,7 +62,11 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	 * @param enabled Enabled (true).
 	 */
 	public void setTestModeEnabled(boolean enabled) {
-		testMode = enabled;
+		if (enabled) {
+			setParameter("test", "true");
+		} else {
+			removeParameter("test");
+		}
 	}
 	
 	/**
@@ -87,52 +84,29 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 		format = format.toLowerCase().trim();
 		//
 		if (format.equals("xml")) {
-			responseFormat = "clientRequestAd";
+			setUrl(IA_URL + "clientRequestAd");
 		} else if (format.equals("html")) {
-			responseFormat = "clientRequestHtmlAd";
+			setUrl(IA_URL + "clientRequestHtmlAd");
 		} else {
 			throw new IllegalArgumentException("Invalid format: " + format);
 		}
 	}
 
 	/**
-	 * <p>
-	 * Returns the M2M API version.
-	 * </p>
-	 * @return Version.
+	 * @see com.emobtech.adme.ad.AdHandler#getUserAgent()
 	 */
-	public String getApiVersion() {
-		return apiVersion;
+	public String getUserAgent() {
+		return userAgent;
 	}
-
+	
 	/**
 	 * <p>
-	 * Sets the M2M API version.
+	 * Sets the user agent.
 	 * </p>
-	 * @param apiVersion Version.
+	 * @param userAgent
 	 */
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
-
-	/**
-	 * @see com.emobtech.adme.ad.AbstractAdHandler#getServiceURL()
-	 */
-	public String getServiceURL() {
-		StringBuffer url =
-			new StringBuffer("http://m2m1.inner-active.com/simpleM2M/");
-		//
-		url.append(responseFormat + "?");
-		url.append("aid=" + getAccountID());
-		url.append("&cid=" + getAuid());
-		url.append("&v=" + getApiVersion());
-//		url.append("&po=639");
-		url.append(getMetadataAsQueryString());
-		if (testMode) {
-			url.append("&test=true");
-		}
-		//
-		return url.toString();
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
 	}
 
 	/**
@@ -140,8 +114,6 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	 */
 	public Ad parseResponse(InputStream response) throws IOException {
 		String respStr = StringUtil.getStringFromStream(response).trim();
-		//
-//		System.out.println(respStr);
 		//
 		if (respStr.startsWith("<tns:Response")) {
 			response.reset();
@@ -186,7 +158,7 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 							return null;
 						}
 					} else if (tag.equals("tns:client")) {
-						setAuid(parser.getAttributeValue(0));
+						setParameter("cid", parser.getAttributeValue(0));
 					}
 				} else if (etype == XmlPullParser.TEXT) {
 					if (tag.equals("tns:image")) {
@@ -213,7 +185,7 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 			}
 			//
 			if (url != null || text != null) {
-				return new Ad(link, text, url, null);
+				return new Ad(link, text, url, null, null);
 			} else {
 				return null;
 			}
@@ -245,7 +217,7 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 					link = StringUtil.replace(link, "&amp;", "&");
 					imgURL = StringUtil.replace(imgURL, "&amp;", "&");
 					//
-					return new Ad(link, null, imgURL, null);
+					return new Ad(link, null, imgURL, null, html);
 				}
 			}
 			//

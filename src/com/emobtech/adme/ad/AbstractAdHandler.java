@@ -25,38 +25,17 @@ import com.emobtech.adme.util.URLEncoder;
 public abstract class AbstractAdHandler implements AdHandler {
 	/**
 	 * <p>
-	 * Account ID.
-	 * </p>
+	 * URL.
+	 * </p> 
 	 */
-	private String accountID;
+	private String url;
 	
 	/**
 	 * <p>
-	 * User agent.
+	 * Parameters table.
 	 * </p>
 	 */
-	private String userAgent;
-	
-	/**
-	 * <p>
-	 * Local address.
-	 * </p>
-	 */
-	private String localAddress;
-	
-	/**
-	 * <p>
-	 * Application unique id.
-	 * </p>
-	 */
-	private String auid;
-	
-	/**
-	 * <p>
-	 * Metadata table.
-	 * </p>
-	 */
-	private Hashtable metadata;
+	private Hashtable parameters;
 	
 	/**
 	 * <p>
@@ -64,138 +43,80 @@ public abstract class AbstractAdHandler implements AdHandler {
 	 * </p>
 	 */
 	public AbstractAdHandler() {
+		parameters = new Hashtable();
 	}
 	
 	/**
 	 * <p>
-	 * Create an instance of AbstractAdHandler class.
+	 * Returns the ad network URL.
 	 * </p>
-	 * @param accountID Account ID.
+	 * @return URL.
 	 */
-	public AbstractAdHandler(String accountID) {
-		this.accountID = accountID;
-		userAgent = "Profile/MIDP-2.0 Configuration/CLDC-1.0";
-		auid = System.currentTimeMillis() + "";
-		metadata = new Hashtable();
-		try {
-			Object o =
-				Class.forName(
-					"com.emobtech.adme.io.LocalAddress").newInstance();
-			//
-			localAddress = o.toString();
-		} catch (Exception e) {}
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * <p>
+	 * Sets the ad network URL.
+	 * </p>
+	 * @param url URL.
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	/**
+	 * <p>
+	 * Sets a parameter value.
+	 * </p>
+	 * @param parameter Parameter.
+	 * @param value Value.
+	 */
+	public void setParameter(String parameter, String value) {
+		parameters.put(parameter, value);
 	}
 	
 	/**
 	 * <p>
-	 * Returns all metadata as query string format.
+	 * Removes a given parameter.
+	 * </p>
+	 * @param parameter Parameter.
+	 */
+	public void removeParameter(String parameter) {
+		parameters.remove(parameter);
+	}
+
+	/**
+	 * <p>
+	 * Returns all parameters as query string format.
 	 * </p>
 	 * @return Query string.
 	 */
-	public String getMetadataAsQueryString() {
+	public String getParametersAsQueryString() {
 		StringBuffer queryStr = new StringBuffer();
-		Enumeration mdKeys = metadata.keys();
+		Enumeration mdKeys = parameters.keys();
 		//
 		while (mdKeys.hasMoreElements()) {
 			String key = mdKeys.nextElement().toString();
 			//
 			queryStr.append('&' + key + '=');
 			queryStr.append(
-				URLEncoder.encode(metadata.get(key).toString(), "UTF-8"));
+				URLEncoder.encode(parameters.get(key).toString(), "UTF-8"));
 		}
 		//
 		return queryStr.toString();
-
-	}
-
-	/**
-	 * <p>
-	 * Returns the account ID.
-	 * </p>
-	 * @return Account ID.
-	 */
-	public String getAccountID() {
-		return accountID;
-	}
-
-	/**
-	 * <p>
-	 * Returns the user agent.
-	 * </p>
-	 * @return User agent.
-	 */
-	public String getUserAgent() {
-		return userAgent;
-	}
-
-	/**
-	 * <p>
-	 * Returns the local address.
-	 * </p>
-	 * @return Local address.
-	 */
-	public String getLocalAddress() {
-		return localAddress;
-	}
-
-	/**
-	 * <p>
-	 * Returns the application unique ID.
-	 * </p>
-	 * @return AUID.
-	 */
-	public String getAuid() {
-		return auid;
 	}
 	
 	/**
-	 * <p>
-	 * Sets the account ID.
-	 * </p>
-	 * @param accountID Account ID.
+	 * @see com.emobtech.adme.ad.AdHandler#getServiceURL()
 	 */
-	public void setAccountID(String accountID) {
-		this.accountID = accountID;
-	}
-
-	/**
-	 * <p>
-	 * Sets the user agent.
-	 * </p>
-	 * @param userAgent User agent.
-	 */
-	public void setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-	}
-
-	/**
-	 * <p>
-	 * Sets the local address.
-	 * </p>
-	 * @param localAddress Local address.
-	 */
-	public void setLocalAddress(String localAddress) {
-		this.localAddress = localAddress;
-	}
-
-	/**
-	 * <p>
-	 * Sets the application unique ID.
-	 * </p>
-	 * @param auid AUID.
-	 */
-	public void setAuid(String auid) {
-		this.auid = auid;
-	}
-	
-	/**
-	 * <p>
-	 * Sets a metadata property.
-	 * </p>
-	 * @param property Property.
-	 * @param value Value.
-	 */
-	public void setMetadataProperty(String property, String value) {
-		metadata.put(property, value);
+	public String getServiceURL() {
+		StringBuffer adUrl = new StringBuffer(url);
+		//
+		adUrl.append('?');
+		adUrl.append(getParametersAsQueryString());
+		//
+		return adUrl.toString();
 	}
 }

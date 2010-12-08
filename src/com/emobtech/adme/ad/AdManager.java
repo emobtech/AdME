@@ -48,7 +48,7 @@ public final class AdManager implements ConnectionListener {
 	 * Ad handler.
 	 * </p>
 	 */
-	private AbstractAdHandler handler;
+	private AdHandler handler;
 	
 	/**
 	 * <p>
@@ -56,13 +56,6 @@ public final class AdManager implements ConnectionListener {
 	 * </p>
 	 */
 	private AdListener listener;
-	
-	/**
-	 * <p>
-	 * Last ad retrieved.
-	 * </p>
-	 */
-	private Ad prevAd;
 
 	/**
 	 * <p>
@@ -77,7 +70,7 @@ public final class AdManager implements ConnectionListener {
 	 * </p>
 	 * @param handler Ad handler.
 	 */
-	public AdManager(AbstractAdHandler handler) {
+	public AdManager(AdHandler handler) {
 		this.handler = handler;
 		//
 		adDownloader = new HttpManager();
@@ -122,7 +115,7 @@ public final class AdManager implements ConnectionListener {
 	 * Starts an ad request.
 	 * </p>
 	 */
-	public void startGetAd() {
+	public void requestAd() {
 		adDownloader.start(handler.getServiceURL());
 		//
 		ad = null;
@@ -130,7 +123,7 @@ public final class AdManager implements ConnectionListener {
 	
 	/**
 	 * <p>
-	 * Returns the ad just retrieved.
+	 * Returns the last ad retrieved.
 	 * </p>
 	 * @return Ad.
 	 */
@@ -151,36 +144,29 @@ public final class AdManager implements ConnectionListener {
 	 * @see com.emobtech.adme.io.ConnectionListener#onSuccess(java.lang.String)
 	 */
 	public void onSuccess(String url) {
-		try {
-			if (ad == null) {
-				ByteArrayInputStream in =
-					new ByteArrayInputStream(adDownloader.getData());
-				//
-				try {
-					ad = handler.parseResponse(in);
-				} catch (IOException e) {}
-				//
-				if (ad != null) {
-					if (ad.equals(prevAd)) {
-						notifyReceivedAd(prevAd);
-					} else if (ad.getImageURL() == null
-							       && ad.getText() != null) {
-						notifyReceivedAd(ad);
-					} else {
-						contentDownloader.start(ad.getImageURL());
-					}
+		if (ad == null) {
+			ByteArrayInputStream in =
+				new ByteArrayInputStream(adDownloader.getData());
+			//
+			try {
+				ad = handler.parseResponse(in);
+			} catch (IOException e) {}
+			//
+			if (ad != null) {
+				if (ad.getImageURL() == null && ad.getText() != null) {
+					notifyReceivedAd(ad);
+				} else if (ad.getImageURL() != null) {
+					contentDownloader.start(ad.getImageURL());
 				} else {
-					notifyReceivedAd(null);
+					onFail(url, new Exception("Invalid Ad!"));
 				}
 			} else {
-				ad.setImage(contentDownloader.getData());
-				//
-				notifyReceivedAd(ad);
+				onFail(url, new Exception("Ad not found!"));
 			}
-		} catch (OutOfMemoryError e) {
-			System.gc();
+		} else {
+			ad.setImage(contentDownloader.getData());
 			//
-			onFail(url, e);
+			notifyReceivedAd(ad);
 		}
 	}
 	
@@ -193,10 +179,6 @@ public final class AdManager implements ConnectionListener {
 	protected void notifyReceivedAd(Ad ad) {
 		if (listener != null) {
 			listener.onReceived(ad);
-		}
-		//
-		if (ad != null) {
-			prevAd = ad;
 		}
 	}
 }

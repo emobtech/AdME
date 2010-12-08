@@ -31,6 +31,14 @@ public interface AdHandler {
 	
 	/**
 	 * <p>
+	 * Returns the user agent.
+	 * </p>
+	 * @return User agent.
+	 */
+	public String getUserAgent();
+	
+	/**
+	 * <p>
 	 * Parses the ad information returned by ad network.
 	 * </p>
 	 * @param response Ad content.
