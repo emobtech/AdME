@@ -1,0 +1,187 @@
+<project name="AdME" default="+build_all" basedir=".">
+
+	<property file="build.properties"/>
+	<property file="build.number"/>
+	<property name="findbugs-report-prefixname" value="findbugs-report"/>
+	
+    <target name="-load_taskdefs">
+		<taskdef resource="antenna.properties">
+			<classpath location="${adme.path.lib.antenna}"/>
+		</taskdef>
+	</target>
+	
+	<target name="-clean">
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${adme.path.build}" includes="*,*/**"/>
+        	<fileset dir="${adme.version.path.dist}" includes="*,*/**"/>
+        	<fileset dir="${adme.path.javadoc}" includes="*,*/**"/>
+        	<fileset dir="${adme.path.test.bin}" includes="*,*/**"/>
+        </delete>
+    </target>
+
+	<target name="-init" depends="-clean, -load_taskdefs">
+		<mkdir dir="${adme.path.build}"/>
+		<mkdir dir="${adme.path.src.preprocessed}"/>
+		<mkdir dir="${adme.path.build.bin}"/>
+		<mkdir dir="${adme.path.dist}"/>
+		<mkdir dir="${adme.version.path.dist}"/>
+		<mkdir dir="${adme.path.javadoc}"/>
+		<mkdir dir="${adme.path.test.bin}"/> 
+	</target>
+	
+	<target name="-preprocessor" depends="-init">
+		<wtkpreprocess srcdir="${adme.path.src}"
+			           destdir="${adme.path.src.preprocessed}"
+			           encoding="${adme.version.encoding}"
+			           symbols="${adme.version.preprocessor.symbols}"/>
+	</target>
+	
+	<target name="+javadoc">
+		  <javadoc sourcepath="${adme.path.src}"
+		           destdir="${adme.path.javadoc}"
+		           author="true"
+		           version="true"
+		           use="true"
+		           windowtitle="AdME"
+		  		   locale="en_US"
+		  		   excludepackagenames="impl.*">
+		  	
+		  	<doctitle><![CDATA[<h1>AdME</h1>]]></doctitle>
+		  	<bottom><![CDATA[<i>Copyright &#169; 2010 AdME Team. All Rights Reserved.</i>]]></bottom>
+
+		  </javadoc>
+	</target>
+
+	<target name="-compile" depends="-preprocessor">
+		<javac srcdir="${adme.path.src.preprocessed}"
+			   destdir="${adme.path.build.bin}"
+			   encoding="${adme.version.encoding}"
+			   source="${adme.version.source}"
+			   target="${adme.version.source}"
+			   optimize="true"
+			   debug="${adme.compile.debug}">
+			<include name="com/emobtech/adme/**"/>
+
+			<classpath refid="adme.classpath"/>
+		</javac>
+	</target>
+
+	<target name="-compile_unit_tests">
+		<javac srcdir="${adme.path.test.src}"
+			   destdir="${adme.path.test.bin}"
+			   encoding="${adme.version.encoding}"
+			   source="${adme.version.source}"
+			   target="${adme.version.source}"
+			   optimize="true"
+			   debug="${adme.compile.debug}">
+			<include name="com/emobtech/adme/**" if="adme.building.javame"/>
+
+			<classpath refid="adme.classpath"/>
+			<classpath path="${adme.path.build.bin}"/>
+		</javac>
+	</target>
+	
+	<target name="-lib_javame" if="adme.building.javame">
+		<jar basedir="${adme.path.build.bin}" destfile="${adme.version.path.dist}/${adme.version.jar}"/>
+	</target>
+
+	<target name="-classpath_javame" if="adme.building.javame">
+		<path id="adme.classpath">
+			<path path="${adme.path.lib.midp20}"/>
+			<path path="${adme.path.lib.cldc10}"/>
+			<path path="${adme.path.lib.kxml2}"/>
+			<path path="${adme.path.lib.junit}"/>
+			<path path="${adme.path.lib.mobilejunit}"/>
+			<path path="${adme.path.lib.mobilejunit-framework}"/>
+			<path path="${adme.path.lib.xauth-encoders}"/>
+			<path path="${adme.path.lib.jsonorg}"/>
+		</path>
+	</target>
+
+	<target name="-preverify_javame" if="adme.building.javame">
+		<wtkpreverify jarfile="${adme.version.path.dist}/${adme.version.jar}"/>
+	</target>
+	
+	<target name="-run" depends="-classpath_javame, -compile, -lib_javame, -preverify_javame, -run_unit_tests_javame, -findbugs"/>
+	
+	<target name="+build_javame">
+		<antcall target="-run">
+			<param name="wtk.midp.version" value="2.0"/>
+			<param name="wtk.cldc.version" value="1.0"/>
+			<param name="wtk.midpapi" value="${adme.path.lib.midp20};${adme.path.lib.cldc10}"/>
+			<param name="adme.building.javame" value="true"/>
+			<param name="adme.version.jar" value="${adme.lib.name}-${adme.number.version}.${build.number}.jar"/>
+			<param name="adme.version.findbug.report" value="${basedir}/${findbugs-report-prefixname}-${adme.javame.name}-${adme.number.version}.${build.number}"/>
+			<param name="adme.version.impl.package" value="${adme.javame.impl.package}"/>
+			<param name="adme.version.encoding" value="${adme.javame.encoding}"/>
+			<param name="adme.version.source" value="${adme.javame.source}"/>
+			<param name="adme.version.path.dist" value="${adme.javame.path.dist}"/>
+			<param name="adme.version.preprocessor.symbols" value="${adme.javame.preprocessor.symbols}"/>
+		</antcall>
+	</target>
+	
+	<target name="+increment_version">
+		<buildnumber/>
+	</target>
+	
+	<target name="-findbugs" if="adme.findbugs">
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+			<classpath location="${adme.path.lib.findbugs}"/>
+		</taskdef>
+		
+	    <findbugs home="${adme.path.findbugs}"
+	    	      classpath="adme.classpath"
+	              output="html"
+	              outputFile="${adme.version.findbug.report}.html"
+		          sourcepath="${adme.path.src}"
+	    		  excludefilter="findbugs-filters.xml">
+	        <class location="${adme.version.path.dist}/${adme.version.jar}"/>
+        </findbugs>
+	</target>
+
+	<target name="+package">
+		<property name="adme.package" value="${adme.lib.name}-${adme.number.version}.${build.number}"/>
+		
+		<delete dir="${basedir}" includes="${adme.lib.name}*.zip" />
+
+		<zip destfile="${basedir}/${adme.package}-javame.zip">
+			<zipfileset dir="${adme.path.src}" prefix="${adme.package}/src" includes="**/*.*"/>
+			<zipfileset dir="${adme.path.lib}" prefix="${adme.package}/lib" includes="**/*.*" excludes="**/mobile-ju-framework-1.0.jar"/>
+			<zipfileset dir="${adme.javame.path.dist}" prefix="${adme.package}/dist" includes="**/*.*"/>
+		    <zipfileset dir="${adme.path.javadoc}" prefix="${adme.package}/doc/javadoc" includes="**/*.*"/>
+			<zipfileset dir="${basedir}" prefix="${adme.package}" includes="LICENSE.txt"/>
+			<zipfileset dir="${basedir}" prefix="${adme.package}" includes="READ-ME.txt"/>
+		</zip>
+	</target>
+	
+	<target name="-run_unit_tests_javame" if="adme.unittest" depends="-compile_unit_tests">
+		<java classname="com.sonyericsson.sdkme.junit.OnDeviceTest"	fork="true" failonerror="true">
+			<classpath refid="adme.classpath"/>
+
+			<arg value="--javac:C:\\Program Files\\Java\\jdk1.6.0_21\\bin\\javac.exe" />
+			<arg value="--project-dir:${basedir}"/>
+			<arg value="--device:SonyEricsson_JP8_240x320_Emu"/>
+			<arg value="--wtk:${wtk.home}"/>
+			<arg value="--compile-midlet:false"/>
+			<arg value="--compile:true"/>
+			<arg value="--name:${ant.project.name}"/>
+			<arg value="--runmode:COMPILE-AND-RUN"/>
+			<arg value="--midlet-under-test:${adme.version.path.dist}/${adme.version.jar}"/>
+			<arg value="--progress:GUI"/>
+			<arg value="--midlet-source:${adme.path.src.preprocessed}"/>
+			<arg value="--midlet-classes:${adme.path.build.bin}"/>
+			<arg value="--add-line-numbers:true"/>
+			<arg value="--coverage:L"/>
+			<arg value="--coverage-report:${basedir}/unitests-coverage-javame.html"/>
+			<!--
+			<arg value="-suite:com.emobtech.adme.test.AdMETestSuite"/>s
+			Uncomment it to run the tests manually.
+			<arg value="-test-runner-class:com.sonyericsson.junit.midletrunner.StandaloneMIDlet"/>
+			-->
+		</java>
+	</target>
+
+	<target name="+build_all" depends="+build_javame"/>
+	
+	<target name="+release" depends="+build_all, +javadoc, +package"/>
+</project>
