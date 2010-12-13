@@ -12,6 +12,7 @@ import java.io.InputStream;
 
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import com.emobtech.adme.ad.AbstractAdHandler;
 import com.emobtech.adme.ad.Ad;
@@ -110,6 +111,12 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	 */
 	public void setUserAgent(String userAgent) {
 		this.userAgent = userAgent;
+		//
+		if (StringUtil.isEmpty(userAgent)) {
+			removeParameter("ua");
+		} else {
+			setParameter("ua", userAgent);
+		}
 	}
 
 	/**
@@ -121,7 +128,11 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 		if (respStr.startsWith("<tns:Response")) {
 			response.reset();
 			//
-			return parseXMLResponse(response);
+			try {
+				return parseXMLResponse(response);
+			} catch (XmlPullParserException e) {
+				return null;
+			}
 		} else if (respStr.startsWith("<a href")) {
 			response.reset();
 			//
@@ -138,61 +149,59 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	 * @param response Response.
 	 * @return Ad.
 	 * @throws IOException If occurs any I/O error by parsing the ad.
+	 * @throws XmlPullParserException If occurs any parser error.
 	 */
-	protected Ad parseXMLResponse(InputStream response) throws IOException {
-		try {
-			KXmlParser parser = new KXmlParser();
-			parser.setInput(response, "UTF-8");
-			//
-			int etype = parser.next();
-			String tag = "";
-			String url = null;
-			String link = null;
-			String text = null;
-			//
-			while (etype != XmlPullParser.END_DOCUMENT) {
-				if (etype == XmlPullParser.START_TAG) {
-					tag = parser.getName().toLowerCase();
-					//
-					if (tag.equals("tns:response")) {
-						String res = parser.getAttributeValue(0);
-						//
-						if (!("OK".equals(res) || "House Ad".equals(res))) {
-							return null;
-						}
-					} else if (tag.equals("tns:client")) {
-						setParameter("cid", parser.getAttributeValue(0));
-					}
-				} else if (etype == XmlPullParser.TEXT) {
-					if (tag.equals("tns:image")) {
-						url = parser.getText();
-						if (StringUtil.isEmpty(url)) {
-							url = null;
-						}
-					} else if (tag.equals("tns:url")) {
-						link = parser.getText();
-						if (StringUtil.isEmpty(link)) {
-							link = null;
-						}
-					} else if (tag.equals("tns:text")) {
-						text = parser.getText();
-						if (StringUtil.isEmpty(text)) {
-							text = null;
-						}
-					}
-				} else if (etype == XmlPullParser.END_TAG) {
-					tag = "";
-				}
+	protected Ad parseXMLResponse(InputStream response) throws IOException,
+		XmlPullParserException {
+		KXmlParser parser = new KXmlParser();
+		parser.setInput(response, "UTF-8");
+		//
+		int etype = parser.next();
+		String tag = "";
+		String url = null;
+		String link = null;
+		String text = null;
+		//
+		while (etype != XmlPullParser.END_DOCUMENT) {
+			if (etype == XmlPullParser.START_TAG) {
+				tag = parser.getName().toLowerCase();
 				//
-				etype = parser.next();
+				if (tag.equals("tns:response")) {
+					String res = parser.getAttributeValue(0);
+					//
+					if (!("OK".equals(res) || "House Ad".equals(res))) {
+						return null;
+					}
+				} else if (tag.equals("tns:client")) {
+					setParameter("cid", parser.getAttributeValue(0));
+				}
+			} else if (etype == XmlPullParser.TEXT) {
+				if (tag.equals("tns:image")) {
+					url = parser.getText();
+					if (StringUtil.isEmpty(url)) {
+						url = null;
+					}
+				} else if (tag.equals("tns:url")) {
+					link = parser.getText();
+					if (StringUtil.isEmpty(link)) {
+						link = null;
+					}
+				} else if (tag.equals("tns:text")) {
+					text = parser.getText();
+					if (StringUtil.isEmpty(text)) {
+						text = null;
+					}
+				}
+			} else if (etype == XmlPullParser.END_TAG) {
+				tag = "";
 			}
 			//
-			if (url != null || text != null) {
-				return new Ad(link, text, url, null, null);
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
+			etype = parser.next();
+		}
+		//
+		if (url != null || text != null) {
+			return new Ad(link, text, url, null, null);
+		} else {
 			return null;
 		}
 	}
@@ -206,27 +215,23 @@ public final class InneractiveAdHandler extends AbstractAdHandler {
 	 * @throws IOException If occurs any I/O error by parsing the ad.
 	 */
 	protected Ad parseHTMLResponse(InputStream response) throws IOException {
-		try {
-			String html = StringUtil.getStringFromStream(response).trim();
-			int ix = html.indexOf("<a href=\"");
+		String html = StringUtil.getStringFromStream(response).trim();
+		int ix = html.indexOf("<a href=\"");
+		//
+		if (ix != -1) {
+			String link = html.substring(9, html.indexOf("\"", 9));
+			ix = html.indexOf("<img src=\"");
 			//
 			if (ix != -1) {
-				String link = html.substring(9, html.indexOf("\"", 9));
-				ix = html.indexOf("<img src=\"");
+				String imgURL =
+					html.substring(ix + 10, html.indexOf("\"", ix + 10));
+				link = StringUtil.replace(link, "&amp;", "&");
+				imgURL = StringUtil.replace(imgURL, "&amp;", "&");
 				//
-				if (ix != -1) {
-					String imgURL =
-						html.substring(ix + 10, html.indexOf("\"", ix + 10));
-					link = StringUtil.replace(link, "&amp;", "&");
-					imgURL = StringUtil.replace(imgURL, "&amp;", "&");
-					//
-					return new Ad(link, null, imgURL, null, html);
-				}
+				return new Ad(link, null, imgURL, null, html);
 			}
-			//
-			return null;
-		} catch (Exception e) {
-			return null;
 		}
+		//
+		return null;
 	}
 }
