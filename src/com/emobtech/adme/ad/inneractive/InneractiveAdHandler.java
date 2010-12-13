@@ -5,7 +5,7 @@
  * Copyright(c) Ernandes Mourao Junior (ernandes@gmail.com)
  * All rights reserved
  */
-package com.emobtech.adme.ad;
+package com.emobtech.adme.ad.inneractive;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +13,10 @@ import java.io.InputStream;
 import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParser;
 
+import com.emobtech.adme.ad.AbstractAdHandler;
+import com.emobtech.adme.ad.Ad;
+import com.emobtech.adme.ad.AdHandler;
+import com.emobtech.adme.ad.AdManager;
 import com.emobtech.adme.util.StringUtil;
 
 /**

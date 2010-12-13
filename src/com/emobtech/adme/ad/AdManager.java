@@ -10,6 +10,7 @@ package com.emobtech.adme.ad;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import com.emobtech.adme.ad.inneractive.InneractiveAdHandler;
 import com.emobtech.adme.io.ConnectionListener;
 import com.emobtech.adme.io.HttpManager;
 import com.emobtech.adme.util.StringUtil;

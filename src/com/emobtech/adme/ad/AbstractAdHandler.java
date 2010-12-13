@@ -10,6 +10,7 @@ package com.emobtech.adme.ad;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import com.emobtech.adme.ad.inneractive.InneractiveAdHandler;
 import com.emobtech.adme.util.URLEncoder;
 
 /**
