@@ -15,7 +15,6 @@ import org.xmlpull.v1.XmlPullParser;
 
 import com.emobtech.adme.ad.AbstractAdHandler;
 import com.emobtech.adme.ad.Ad;
-import com.emobtech.adme.ad.AdHandler;
 import com.emobtech.adme.ad.AdManager;
 import com.emobtech.adme.util.StringUtil;
 
