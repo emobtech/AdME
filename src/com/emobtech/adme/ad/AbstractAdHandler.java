@@ -29,14 +29,14 @@ public abstract class AbstractAdHandler implements AdHandler {
 	 * URL.
 	 * </p> 
 	 */
-	private String url;
+	protected String url;
 	
 	/**
 	 * <p>
 	 * Parameters table.
 	 * </p>
 	 */
-	private Hashtable parameters;
+	protected Hashtable parameters;
 	
 	/**
 	 * <p>
@@ -89,12 +89,24 @@ public abstract class AbstractAdHandler implements AdHandler {
 	}
 
 	/**
+	 * @see com.emobtech.adme.ad.AdHandler#getServiceURL()
+	 */
+	public String getServiceURL() {
+		StringBuffer adUrl = new StringBuffer(url);
+		//
+		adUrl.append('?');
+		adUrl.append(getParametersAsQueryString());
+		//
+		return adUrl.toString();
+	}
+
+	/**
 	 * <p>
 	 * Returns all parameters as query string format.
 	 * </p>
 	 * @return Query string.
 	 */
-	public String getParametersAsQueryString() {
+	protected String getParametersAsQueryString() {
 		StringBuffer queryStr = new StringBuffer();
 		Enumeration mdKeys = parameters.keys();
 		//
@@ -107,17 +119,5 @@ public abstract class AbstractAdHandler implements AdHandler {
 		}
 		//
 		return queryStr.toString();
-	}
-	
-	/**
-	 * @see com.emobtech.adme.ad.AdHandler#getServiceURL()
-	 */
-	public String getServiceURL() {
-		StringBuffer adUrl = new StringBuffer(url);
-		//
-		adUrl.append('?');
-		adUrl.append(getParametersAsQueryString());
-		//
-		return adUrl.toString();
 	}
 }

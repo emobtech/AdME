@@ -9,6 +9,7 @@ package com.emobtech.adme.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Vector;
 
 /**
  * <p>
@@ -94,6 +95,78 @@ public final class StringUtil {
 		sb.append(text.substring(startPos, text.length()));
 		//
 		return sb.toString();
+	}
+	
+	/**
+     * <p>
+     * Split a string based on a given delimiter.
+     * </p>
+     * @param str String.
+     * @param delimiter Delimiter.
+     * @return String tokens.
+     * @throws IllegalArgumentException If str is null.
+     */
+    public static final String[] split(String str, char delimiter) {
+    	if (str == null) {
+    		throw new IllegalArgumentException("Str must not be null.");
+    	}
+    	//
+        Vector v = new Vector();
+        int start = 0;
+        int iof;
+        //
+        while ((iof = str.indexOf(delimiter, start)) != -1) {
+            v.addElement(str.substring(start, iof).trim());
+            start = iof +1;
+        }
+        //
+        v.addElement(str.substring(start, str.length()).trim());
+        String[] codes = new String[v.size()];
+        v.copyInto(codes);
+        //
+        return codes;
+    }
+    
+	/**
+	 * <p>
+	 * Remove any tag occurrence from the given string.
+	 * </p>
+	 * @param str String to be parsed.
+	 * @return String with no tags.
+	 * @throws IllegalArgumentException If str is null.
+	 */
+	public static String removeTags(String str) {
+		if (str == null) {
+			throw new IllegalArgumentException("Str must not be null.");
+		}
+		//
+		StringBuffer out = new StringBuffer();
+		char cs[] = str.toCharArray();
+		boolean tagFound = false;
+		int i1 = 0;
+		int l = 0;
+		//
+		for (int i = 0; i < cs.length; i++) {
+			if (cs[i] == '<' && !tagFound) {
+				out.append(cs, i1, l);
+				//
+				i1 = i;
+				l = 0;
+				tagFound = true;
+				l++;
+			} else if (cs[i] == '>' && tagFound) {
+				i1 = i +1;
+				l = 0;
+				tagFound = false;
+			} else {
+				l++;
+			}
+		}
+		if (l > 0) {
+			out.append(cs, i1, l);
+		}
+		//
+		return out.toString().trim();
 	}
 	
     /**
