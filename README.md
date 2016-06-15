@@ -27,3 +27,8 @@ adManager.setAdListener(new AdListener() {
 adManager.requestAd();
 ...
 ```
+
+## External Links
+
+* [eMob Tech](http://www.emobtech.com)
+* [J2ME Group Blog](http://j2megroup.blogspot.com/)
