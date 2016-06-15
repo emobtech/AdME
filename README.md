@@ -13,6 +13,7 @@
 
 AdHandler adHandler = new InneractiveAdHandler("<app id>");
 AdManager adManager = new AdManager(adHandler);
+//
 adManager.setAdListener(new AdListener() {
 	public void onReceived(Ad ad) {
     	Image adImage = Image.createImage(ad.getImage());
@@ -22,6 +23,7 @@ adManager.setAdListener(new AdListener() {
     	System.out.println(exception.getMessage());
     }
 });
+//
 adManager.requestAd();
 ...
 ```
