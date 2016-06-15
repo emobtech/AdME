@@ -8,6 +8,20 @@ AdME stands for Advertising Micro Edition. It is a mobile Java ME API that allow
 
 ## Sample Code
 
-```javascript
-dsadsadasd
+```java
+...
+
+AdHandler adHandler = new InneractiveAdHandler("<app id>");
+AdManager adManager = new AdManager(adHandler);
+adManager.setAdListener(new AdListener() {
+	public void onReceived(Ad ad) {
+    	Image adImage = Image.createImage(ad.getImage());
+    }
+    
+    public void onFailedAd(Throwable exception) {
+    	System.out.println(exception.getMessage());
+    }
+});
+adManager.requestAd();
+...
 ```
